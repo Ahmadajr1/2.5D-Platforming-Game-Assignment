@@ -4,25 +4,38 @@ using UnityEngine;
 
 public class MovePlatform : MonoBehaviour
 {
-    private Vector3 startingPostion;
+    private Vector3 startingPosition;
+    private Rigidbody rigidBody;
+    private int flipDirection = 1;
+    float maxDistance;
+
     [SerializeField] private Vector3 endingPosition;
     [SerializeField] private float speed = 0.5f;
 
-    // Start is called before the first frame update
-
     void Start()
     {
-        startingPostion = transform.position;
+        startingPosition = transform.position;
+        maxDistance = Vector3.Magnitude(endingPosition - transform.position);
+        rigidBody = gameObject.GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        OnAnimatorMove();
+        Move();
     }
 
-    private void OnAnimatorMove()
+    private void Move()
     {
-        transform.position = Vector3.Lerp(startingPostion, endingPosition, Mathf.PingPong(speed * Time.time, 1));
+        float currentDistance = Vector3.Magnitude(endingPosition - transform.position);
+        if (currentDistance < 0.1 || currentDistance > maxDistance)
+        {
+            flipDirection *= -1;
+        }
+        rigidBody.MovePosition(endingPosition);
+    }
+
+    public Vector3 GetVelocity()
+    {
+        return rigidBody.velocity;
     }
 }

@@ -11,9 +11,10 @@ public class PlayerControl : MonoBehaviour
     CharacterController characterController;
     private float speed = 10;
     private float gravity = -1f;
-    float maxJumpHeight = 1;
+    float maxJumpHeight;
     private Vector3 playerVelocity;
     private bool isReadyToJump = false;
+    private bool isOnPlatform = false;
     [SerializeField] private TextMeshProUGUI m_TextComponent;
 
     // Start is called before the first frame update
@@ -21,14 +22,16 @@ public class PlayerControl : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
+        characterController.attachedRigidbody.isKinematic = true;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && CheckGroundStatus())
+        if (Input.GetKeyDown(KeyCode.Space) && (CheckGroundStatus() || isOnPlatform))
         {
             isReadyToJump = true;
         }
+        FindPlatfromDistanceAbovePlayer();
         m_TextComponent.text = FindPlatfromDistanceBeneathPlayer();
     }
 
@@ -38,51 +41,47 @@ public class PlayerControl : MonoBehaviour
         Move();
         if (isReadyToJump)
             jump();
+       
     }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Moving Platform"))
-        {
-            //transform.position = new Vector3(transform.position.x, collision.gameObject.transform.position.y + 0.5f, transform.position.z);
-        }
-    }
+  
 
 
     private void Move()
     {
         playerVelocity.x = Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
+        playerVelocity.y += gravity * Time.deltaTime;
 
         if (CheckGroundStatus() && playerVelocity.y < 0)
         {
             playerVelocity.y = 0;
         }
 
-        playerVelocity.y += gravity * Time.deltaTime;
-        characterController.Move(playerVelocity);
+        // To reset the effect of gravity 
+        if (CheckGroundStatus() && playerVelocity.y < 0)
+            playerVelocity.y = 0;
+
+        if(playerVelocity != Vector3.zero)
+            characterController.Move(playerVelocity);
     }
 
     private void jump()
     {
         isReadyToJump = false;
-        playerVelocity.y += Mathf.Sqrt(maxJumpHeight * -0.3f * gravity);
+        playerVelocity.y += Mathf.Sqrt(maxJumpHeight * -0.04f * gravity);
         characterController.Move(playerVelocity * Time.deltaTime);
     }
 
     private bool CheckGroundStatus()
     {
         RaycastHit hitData;
-        float raycastLength = 0.1f;
+        float raycastLength = 0.3f;
         Ray landingRay = new Ray(transform.position, Vector3.down);
-        Debug.DrawRay(transform.position, Vector3.down, Color.red, raycastLength);
         if (Physics.Raycast(landingRay, out hitData, raycastLength))
         {
-            Debug.Log(true);
             return true;
         }
         else
         {
-            Debug.Log(false);
             return false;
         }
     }
@@ -93,6 +92,7 @@ public class PlayerControl : MonoBehaviour
         RaycastHit hitData;
         float raycastLength = 1000f;
         Ray landingRay = new Ray(transform.position, Vector3.down);
+        Debug.DrawRay(transform.position, Vector3.down, Color.red, raycastLength);
         if (Physics.Raycast(landingRay, out hitData, raycastLength))
         {
             if (hitData.distance > 0)
@@ -104,5 +104,21 @@ public class PlayerControl : MonoBehaviour
             return "No platform under you";
 
         return distance;
+    }
+
+    private void FindPlatfromDistanceAbovePlayer()
+    {
+        RaycastHit hitData;
+        float raycastLength = 5f;
+        Vector3 offset = new Vector3(0, 1, 0);
+        Ray landingRay = new Ray(transform.position + offset, Vector3.up);
+        Debug.DrawRay(transform.position + offset, Vector3.up, Color.red, raycastLength);
+        if (Physics.Raycast(landingRay, out hitData, raycastLength) && hitData.distance < 10)
+        {
+            maxJumpHeight = hitData.distance * 0.7f;
+        }
+        else {
+            maxJumpHeight = 10;
+        }
     }
 }

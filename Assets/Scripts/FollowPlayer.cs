@@ -12,7 +12,7 @@ public class FollowPlayer : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        offset = new Vector3(0, 5, -5);
+        offset = new Vector3(0, 5, -10);
     }
 
     // Update is called once per frame
