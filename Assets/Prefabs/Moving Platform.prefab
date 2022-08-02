@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5996916549487146916}
   - component: {fileID: 5996916549487146919}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: TriggerArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,7 +59,7 @@ GameObject:
   - component: {fileID: 6851164347936692398}
   - component: {fileID: 5996916548993863387}
   - component: {fileID: 5996916548993863391}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Moving Platform
   m_TagString: Moving Platform
   m_Icon: {fileID: 0}

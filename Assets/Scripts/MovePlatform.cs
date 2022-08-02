@@ -5,17 +5,16 @@ using UnityEngine;
 public class MovePlatform : MonoBehaviour
 {
     private Vector3 startingPosition;
+    private Vector3 destination;
     private Rigidbody rigidBody;
-    private int flipDirection = 1;
-    float maxDistance;
-
+    bool toggleDirection = true;
     [SerializeField] private Vector3 endingPosition;
     [SerializeField] private float speed = 0.5f;
 
     void Start()
     {
         startingPosition = transform.position;
-        maxDistance = Vector3.Magnitude(endingPosition - transform.position);
+        destination = endingPosition;
         rigidBody = gameObject.GetComponent<Rigidbody>();
     }
 
@@ -26,12 +25,24 @@ public class MovePlatform : MonoBehaviour
 
     private void Move()
     {
-        float currentDistance = Vector3.Magnitude(endingPosition - transform.position);
-        if (currentDistance < 0.1 || currentDistance > maxDistance)
+        if (toggleDirection)
         {
-            flipDirection *= -1;
+            if (Vector3.Distance(transform.position, destination) < 0.2)
+            {
+                destination = startingPosition;
+                toggleDirection = false;
+            }
         }
-        rigidBody.MovePosition(endingPosition);
+        else 
+        {
+            if (Vector3.Distance(transform.position, destination) < 0.2)
+            {
+                destination = endingPosition;
+                toggleDirection = true;
+            }
+        }
+
+        transform.Translate((destination - transform.position).normalized * speed * Time.deltaTime, null);
     }
 
     public Vector3 GetVelocity()

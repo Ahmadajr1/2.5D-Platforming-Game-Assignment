@@ -20,17 +20,26 @@ public class PlayerControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        characterController = gameObject.GetComponent<CharacterController>();
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
-        characterController.attachedRigidbody.isKinematic = true;
     }
 
     private void Update()
     {
+        if (gameObject.transform.parent != null && gameObject.transform.parent.CompareTag("Moving Platform"))
+        {
+            isOnPlatform = true;
+        }
+        else
+        {
+            isOnPlatform = false;
+        }
+
         if (Input.GetKeyDown(KeyCode.Space) && (CheckGroundStatus() || isOnPlatform))
         {
             isReadyToJump = true;
         }
+
         FindPlatfromDistanceAbovePlayer();
         m_TextComponent.text = FindPlatfromDistanceBeneathPlayer();
     }
@@ -73,10 +82,13 @@ public class PlayerControl : MonoBehaviour
 
     private bool CheckGroundStatus()
     {
+
         RaycastHit hitData;
-        float raycastLength = 0.3f;
-        Ray landingRay = new Ray(transform.position, Vector3.down);
-        if (Physics.Raycast(landingRay, out hitData, raycastLength))
+        Vector3 offset = new Vector3(0, 0.5f, 0);
+        float raycastLength = 2.1f;
+        Ray landingRay = new Ray(transform.position + offset , Vector3.down);
+        Debug.DrawRay(transform.position + offset, Vector3.down, Color.blue, raycastLength);
+        if (Physics.Raycast(landingRay, out hitData, raycastLength, LayerMask.GetMask("Platform")))
         {
             return true;
         }
@@ -93,7 +105,7 @@ public class PlayerControl : MonoBehaviour
         float raycastLength = 1000f;
         Ray landingRay = new Ray(transform.position, Vector3.down);
         Debug.DrawRay(transform.position, Vector3.down, Color.red, raycastLength);
-        if (Physics.Raycast(landingRay, out hitData, raycastLength))
+        if (Physics.Raycast(landingRay, out hitData, raycastLength, LayerMask.GetMask("Platform")))
         {
             if (hitData.distance > 0)
                 distance = "A platform is " + (int)hitData.distance + " units beneath you! ";
@@ -109,13 +121,13 @@ public class PlayerControl : MonoBehaviour
     private void FindPlatfromDistanceAbovePlayer()
     {
         RaycastHit hitData;
-        float raycastLength = 5f;
-        Vector3 offset = new Vector3(0, 1, 0);
+        float raycastLength = 20f;
+        Vector3 offset = new Vector3(0, -0.5f, 0);
         Ray landingRay = new Ray(transform.position + offset, Vector3.up);
         Debug.DrawRay(transform.position + offset, Vector3.up, Color.red, raycastLength);
-        if (Physics.Raycast(landingRay, out hitData, raycastLength) && hitData.distance < 10)
+        if (Physics.Raycast(landingRay, out hitData, raycastLength, LayerMask.GetMask("Platform")) && hitData.distance < 10)
         {
-            maxJumpHeight = hitData.distance * 0.7f;
+            maxJumpHeight = hitData.distance;
         }
         else {
             maxJumpHeight = 10;
