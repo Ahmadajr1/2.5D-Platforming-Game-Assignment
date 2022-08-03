@@ -15,6 +15,7 @@ public class PlayerControl : MonoBehaviour
     private Vector3 playerVelocity;
     private bool isReadyToJump = false;
     private bool isOnPlatform = false;
+    MovePlatform platformScript;
     [SerializeField] private TextMeshProUGUI m_TextComponent;
 
     // Start is called before the first frame update
@@ -26,15 +27,6 @@ public class PlayerControl : MonoBehaviour
 
     private void Update()
     {
-        if (gameObject.transform.parent != null && gameObject.transform.parent.CompareTag("Moving Platform"))
-        {
-            isOnPlatform = true;
-        }
-        else
-        {
-            isOnPlatform = false;
-        }
-
         if (Input.GetKeyDown(KeyCode.Space) && (CheckGroundStatus() || isOnPlatform))
         {
             isReadyToJump = true;
@@ -47,37 +39,43 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Move();
+            Move();
         if (isReadyToJump)
             jump();
-       
     }
   
 
 
     private void Move()
     {
+        Vector3 platformVelocity = Vector3.zero;
+        if (platformScript != null && isOnPlatform)
+            platformVelocity = platformScript.GetPlatformVelocity();
+        
         playerVelocity.x = Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
-        playerVelocity.y += gravity * Time.deltaTime;
 
-        if (CheckGroundStatus() && playerVelocity.y < 0)
+        if (!isOnPlatform)
+        {
+            platformVelocity = Vector3.zero;
+            playerVelocity.y += gravity * Time.deltaTime;
+        }
+
+        if (!isOnPlatform && CheckGroundStatus() && playerVelocity.y < 0)
         {
             playerVelocity.y = 0;
         }
 
-        // To reset the effect of gravity 
-        if (CheckGroundStatus() && playerVelocity.y < 0)
-            playerVelocity.y = 0;
-
-        if(playerVelocity != Vector3.zero)
-            characterController.Move(playerVelocity);
+        Vector3 totalVelocity = playerVelocity + platformVelocity;
+        if(!isReadyToJump && playerVelocity != Vector3.zero)
+            characterController.Move(totalVelocity);
     }
 
     private void jump()
     {
-        isReadyToJump = false;
         playerVelocity.y += Mathf.Sqrt(maxJumpHeight * -0.04f * gravity);
-        characterController.Move(playerVelocity * Time.deltaTime);
+        characterController.Move(playerVelocity);
+        isOnPlatform = false;
+        isReadyToJump = false;
     }
 
     private bool CheckGroundStatus()
@@ -131,6 +129,33 @@ public class PlayerControl : MonoBehaviour
         }
         else {
             maxJumpHeight = 10;
+        }
+    }
+
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Moving Platform"))
+        {
+            isOnPlatform = true;
+            platformScript = other.gameObject.GetComponent<MovePlatform>();
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (isReadyToJump)
+        {
+            isOnPlatform = false;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Moving Platform"))
+        {
+            isOnPlatform = false;
+            platformScript = null;
         }
     }
 }

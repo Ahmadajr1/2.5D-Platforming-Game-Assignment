@@ -6,7 +6,7 @@ public class MovePlatform : MonoBehaviour
 {
     private Vector3 startingPosition;
     private Vector3 destination;
-    private Rigidbody rigidBody;
+    private Rigidbody platformRB;
     bool toggleDirection = true;
     [SerializeField] private Vector3 endingPosition;
     [SerializeField] private float speed = 0.5f;
@@ -15,7 +15,7 @@ public class MovePlatform : MonoBehaviour
     {
         startingPosition = transform.position;
         destination = endingPosition;
-        rigidBody = gameObject.GetComponent<Rigidbody>();
+        platformRB = gameObject.GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
@@ -42,12 +42,11 @@ public class MovePlatform : MonoBehaviour
             }
         }
 
-        Debug.Log(Vector3.Distance(transform.position, destination));
-        rigidBody.MovePosition(rigidBody.position + (destination - rigidBody.position).normalized * speed * Time.fixedDeltaTime);
+        platformRB.MovePosition(transform.position + (destination - transform.position).normalized * speed * Time.fixedDeltaTime);
     }
 
-    public Vector3 GetVelocity()
+    public Vector3 GetPlatformVelocity()
     {
-        return rigidBody.velocity;
+        return platformRB.velocity;
     }
 }
