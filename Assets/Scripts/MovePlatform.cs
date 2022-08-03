@@ -42,7 +42,8 @@ public class MovePlatform : MonoBehaviour
             }
         }
 
-        transform.Translate((destination - transform.position).normalized * speed * Time.deltaTime, null);
+        Debug.Log(Vector3.Distance(transform.position, destination));
+        rigidBody.MovePosition(rigidBody.position + (destination - rigidBody.position).normalized * speed * Time.fixedDeltaTime);
     }
 
     public Vector3 GetVelocity()
