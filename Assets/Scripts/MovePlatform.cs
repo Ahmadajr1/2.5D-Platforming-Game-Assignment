@@ -47,6 +47,7 @@ public class MovePlatform : MonoBehaviour
 
     public Vector3 GetPlatformVelocity()
     {
-        return platformRB.velocity;
+        return (destination - transform.position).normalized * speed * Time.fixedDeltaTime;
     }
+
 }
