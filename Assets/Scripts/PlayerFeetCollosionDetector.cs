@@ -13,7 +13,9 @@ public class PlayerFeetCollosionDetector : MonoBehaviour
 
     private void Update()
     {
-        m_TextComponent.text = FindPlatfromDistanceBeneathPlayer();
+        //For Debugging
+
+        //m_TextComponent.text = FindPlatfromDistanceBeneathPlayer();
     }
 
     [SerializeField] private TextMeshProUGUI m_TextComponent;
@@ -48,23 +50,25 @@ public class PlayerFeetCollosionDetector : MonoBehaviour
     }
 
 
-    //[For debugging purposes] This does nothing in the game other than displaying the distance of nearest platform beneath the player. 
-    private string FindPlatfromDistanceBeneathPlayer()
-    {
-        string distance;
-        RaycastHit hitData;
-        float raycastLength = 100f;
-        Ray landingRay = new Ray(transform.position, Vector3.down);
-        string[] layerMasks = { "Platform", "Moving Platform" };
-        if (Physics.Raycast(landingRay, out hitData, raycastLength, LayerMask.GetMask(layerMasks)))
-        {
-            distance = "A platform is " + (hitData.distance).ToString("0.00") + " units beneath you! ";
+    //[For debugging purposes] This does nothing in the game other than displaying the distance of nearest platform beneath the player.
 
-        }
-        else
-            return "No platform under you";
 
-        return distance;
-    }
+    //private string FindPlatfromDistanceBeneathPlayer()
+    //{
+    //    string distance;
+    //    RaycastHit hitData;
+    //    float raycastLength = 100f;
+    //    Ray landingRay = new Ray(transform.position, Vector3.down);
+    //    string[] layerMasks = { "Platform", "Moving Platform" };
+    //    if (Physics.Raycast(landingRay, out hitData, raycastLength, LayerMask.GetMask(layerMasks)))
+    //    {
+    //        distance = "A platform is " + (hitData.distance).ToString("0.00") + " units beneath you! ";
+
+    //    }
+    //    else
+    //        return "No platform under you";
+
+    //    return distance;
+    //}
 
 }
