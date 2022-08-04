@@ -15,16 +15,22 @@ public class PlayerInteractions : MonoBehaviour
         }
     }
 
-    private void RestartLevel()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Finish"))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        } 
+        }
+
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            RestartLevel();
+        }
     }
+
+    private void RestartLevel()
+    {
+        gameObject.transform.position = new Vector3(-23, 2.7f, -5);
+    }
+
 }

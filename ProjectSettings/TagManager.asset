@@ -6,7 +6,7 @@ TagManager:
   tags:
   - Platform
   - Moving Platform
-  - Light 7
+  - Enemy
   layers:
   - Default
   - TransparentFX
