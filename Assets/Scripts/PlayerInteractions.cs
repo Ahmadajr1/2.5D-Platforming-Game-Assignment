@@ -30,7 +30,7 @@ public class PlayerInteractions : MonoBehaviour
 
     private void RestartLevel()
     {
-        gameObject.transform.position = new Vector3(-23, 2.7f, -5);
+        //Reloading takes time. Previously I attempted to move the player to initial position instead but reallized later that can mess level events (Like dead enemies stay dead)
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-
 }
