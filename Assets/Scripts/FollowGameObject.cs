@@ -23,7 +23,6 @@ public class FollowGameObject : MonoBehaviour
         else
             offset = Mathf.Abs(offset);
 
-        //Lower range is used to add some sort of delay in the reaction of the enemy once it reaches the player
         if (distanceBetweenObjects <= range)
         {
             followerRB.MovePosition(new Vector3(transform.position.x + (target.transform.position.x + offset - transform.position.x) * speed * Time.fixedDeltaTime, transform.position.y, transform.position.z));

@@ -19,7 +19,8 @@ public class PlayerInteractions : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Finish"))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            int nextSceneIndex = other.gameObject.GetComponent<EndPlatform>().GetNextSceneIndex();
+            SceneManager.LoadScene(nextSceneIndex);
         }
 
         if (other.gameObject.CompareTag("Enemy"))
@@ -30,7 +31,13 @@ public class PlayerInteractions : MonoBehaviour
 
     private void RestartLevel()
     {
-        //Reloading takes time. Previously I attempted to move the player to initial position instead but reallized later that can mess level events (Like dead enemies stay dead)
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        //Player Starting Position (This will be automated later)
+        //Reloading takes time. I attempted to move the player to initial position instead but reallized later that can mess up level events (Like dead enemies stay dead), For now changing position is for level one only
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            gameObject.transform.position = new Vector3(-23, 2.68f, -5);
+        }
+        else
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

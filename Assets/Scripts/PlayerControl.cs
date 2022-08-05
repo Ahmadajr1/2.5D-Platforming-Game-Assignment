@@ -22,6 +22,8 @@ public class PlayerControl : MonoBehaviour
     {
         characterController = gameObject.GetComponent<CharacterController>();
         feetScript = gameObject.transform.Find("PlayerFeet").GetComponent<PlayerFeetCollosionDetector>();
+
+        // Planning to use the Canvas later
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
     }
 
